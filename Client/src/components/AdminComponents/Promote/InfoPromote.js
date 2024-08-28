@@ -81,7 +81,7 @@ const InfoPromote = () => {
       try {
 
           axios
-            .patch(`http://localhost:3555/api/v1/admin/orders/${id}`, {
+            .put(`http://localhost:3555/api/v1/admin/orders/${id}`, {
               status:status
             },{
               headers: {

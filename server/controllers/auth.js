@@ -55,7 +55,7 @@ exports.login = async (req, res) => {
         { id: user.id, isAdmin: user.isAdmin },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: '24h',
+          expiresIn: '60d',
         }
       );
 
