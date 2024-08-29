@@ -92,7 +92,7 @@ const InfoPromote = () => {
             .then((res) => {
               console.log('resKHAI:: ', res)
               if (res && res.status == 200) {
-                window.alert('Update Status Sucess!');
+                window.alert('Update Status Success!');
                 handleLoadingPage(1);
                 window.setTimeout(() => {
                   navigate(`/admin/promote`);
