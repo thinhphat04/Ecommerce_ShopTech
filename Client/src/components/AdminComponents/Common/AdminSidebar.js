@@ -34,8 +34,8 @@ const AdminSidebar = () => {
   }, []);
 
   useEffect(() => {
-    admins.map((admin, index) => {
-      if (admin.adminName == window.localStorage.getItem('adminNameLogin')) {
+    admins.map((admin) => {
+      if (admin.adminName === window.localStorage.getItem('adminNameLogin')) {
         setAdminID(admin.adminID);
       }
     });
@@ -43,7 +43,7 @@ const AdminSidebar = () => {
 
   const navigate = useNavigate();
 
-  const handleNevigate = (link) => {
+  const handleNavigate = (link) => {
     handleLoadingPage(1);
     window.setTimeout(() => {
       navigate(link);
@@ -74,7 +74,7 @@ const AdminSidebar = () => {
       <div
         className="sidebar__component-item"
         onClick={() => {
-          handleNevigate(`/admin/dashboard`);
+          handleNavigate(`/admin/dashboard`);
         }}
       >
         <i
@@ -89,7 +89,7 @@ const AdminSidebar = () => {
         <div
           className="sidebar__component-item"
           onClick={() => {
-            handleNevigate(`/admin/customer`);
+            handleNavigate(`/admin/customer`);
           }}
         >
           <i
@@ -101,7 +101,7 @@ const AdminSidebar = () => {
         <div
           className="sidebar__component-item"
           onClick={() => {
-            handleNevigate(`/admin/product`);
+            handleNavigate(`/admin/product`);
           }}
         >
           <i
@@ -113,7 +113,19 @@ const AdminSidebar = () => {
         <div
           className="sidebar__component-item"
           onClick={() => {
-            handleNevigate(`/admin/promote`);
+            handleNavigate(`/admin/category`);
+          }}
+        >
+          <i
+            className="sidebar__component-item-icon fa fa-folder"
+            aria-hidden="true"
+          ></i>
+          Categories
+        </div>
+        <div
+          className="sidebar__component-item"
+          onClick={() => {
+            handleNavigate(`/admin/promote`);
           }}
         >
           <i
@@ -125,7 +137,7 @@ const AdminSidebar = () => {
         <div
           className="sidebar__component-item"
           onClick={() => {
-            handleNevigate(`/admin/feedback`);
+            handleNavigate(`/admin/feedback`);
           }}
         >
           <i
@@ -141,7 +153,7 @@ const AdminSidebar = () => {
         <div
           className="sidebar__component-item"
           onClick={() => {
-            handleNevigate(`/admin/info-admin/${adminID}`);
+            handleNavigate(`/admin/info-admin/${adminID}`);
           }}
         >
           <i

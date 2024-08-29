@@ -56,6 +56,8 @@ import { ModalLoading, PageNotFound } from './components/Common/';
 import AuthAdminProvider from './context/AuthAdminProvider';
 import PolicyPage from './components/ConsumerComponents/Policy/PolicyPage';
 import { NavMobile } from './components/ConsumerComponents/Common';
+import { CategoryPage, InfoCategory } from './components/AdminComponents/Category';
+import AddCategory from './components/AdminComponents/Category/AddCategory';
 
 function App() {
   return (
@@ -79,6 +81,10 @@ function App() {
             <Route path="/admin/product" element={<ProductPage />} />
             <Route path="/admin/product/add" element={<AddProduct />} />
             <Route path="/admin/product/info/:id" element={<InfoProduct />} />
+
+            <Route path="/admin/category" element={<CategoryPage />} />
+            <Route path="/admin/category/add" element={<AddCategory />} />
+            <Route path="/admin/category/info/:id" element={<InfoCategory />} />
 
             <Route path="/admin/promote" element={<PromotePage />} />
             <Route path="/admin/promote/add" element={<AddPromote />} />

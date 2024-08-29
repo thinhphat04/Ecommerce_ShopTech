@@ -107,20 +107,49 @@ exports.addCategory = async (req, res) => {
 
 exports.editCategory = async (req, res) => {
   try {
+    // Handle file upload
+    const imageUpload = util.promisify(
+      media_helper.upload.fields([{ name: 'image', maxCount: 1 }])
+    );
+
+    try {
+      await imageUpload(req, res);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        type: err.code,
+        message: `${err.message}{${err.field}}`,
+        storageErrors: err.storageErrors,
+      });
+    }
+
+    // Prepare data to update
     const { name, icon, colour } = req.body;
+    const image = req.files['image'] ? req.files['image'][0] : null;
+
+    // Build update object
+    const updateData = { name, icon, colour };
+    if (image) {
+      updateData.image = `${req.protocol}://${req.get('host')}/${image.path}`;
+    }
+
+    // Update category
     const category = await Category.findByIdAndUpdate(
       req.params.id,
-      { name, icon, colour },
+      updateData,
       { new: true }
     );
+    
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
+    
     res.json(category);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 };
+
 
 exports.deleteCategory = async (req, res) => {
   try {
@@ -128,13 +157,16 @@ exports.deleteCategory = async (req, res) => {
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
-    category.markedForDeletion = true;
-    await category.save();
-    return res.status(204).end();
+
+    // Delete the category
+    await Category.findByIdAndDelete(req.params.id);
+
+    return res.status(204).end(); // No content to return
   } catch (err) {
     return res.status(500).json({ type: err.name, message: err.message });
   }
 };
+
 
 // ORDER
 
