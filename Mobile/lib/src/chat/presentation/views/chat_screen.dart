@@ -1,9 +1,10 @@
+import 'dart:convert';
+import 'package:ecomly/src/chat/presentation/widget/handelUrl.dart';
+import 'package:flutter/material.dart';
 import 'package:ecomly/core/utils/constants/network_constants.dart';
 import 'package:ecomly/src/chat/data/chatHistory_iml.dart';
 import 'package:ecomly/src/chat/presentation/widget/webSocketService.dart';
-import 'package:flutter/material.dart';
 import 'package:ecomly/core/common/singletons/cache.dart';
-import 'package:ecomly/src/chat/presentation/widget/handelUrl.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -24,8 +25,8 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     _userId = Cache.instance.userId!;
-    _recipientId = '66c4a4e0d91252c94b929ece'; // gán cứng id của admin
-    _webSocketService.connect();
+    _recipientId = '66cac61ba1a23e8c836e5e53'; // gán cứng id của admin
+    _webSocketService.connect(_onMessageReceived);
     _loadChatHistory();
   }
 
@@ -68,8 +69,24 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void _onMessageReceived(String message) {
+    try {
+      final jsonMessage = jsonDecode(message);
+      setState(() {
+        _messages.insert(0, {
+          'text': jsonMessage['content'],
+          'isMine': false, // Đánh dấu tin nhắn này là của người nhận
+        });
+      });
+    } catch (e) {
+      print('Failed to parse received message: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Sắp xếp _messages theo thứ tự giảm dần
+    // _messages.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
     return Scaffold(
       appBar: AppBar(
         title: const Text('Customer Support'),

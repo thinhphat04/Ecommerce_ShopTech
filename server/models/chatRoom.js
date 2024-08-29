@@ -1,8 +1,10 @@
+// models/ChatRoom.js
 const mongoose = require('mongoose');
 
 const chatRoomSchema = new mongoose.Schema({
-  chatId: { type: String, required: true },
-  users: { type: [String], required: true }
+  chatId: String,
+  senderId: String,
+  recipientId: String
 });
 
 module.exports = mongoose.model('ChatRoom', chatRoomSchema);

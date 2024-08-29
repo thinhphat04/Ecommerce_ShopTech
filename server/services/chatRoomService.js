@@ -1,15 +1,24 @@
-const ChatRoom = require('../models/chatRoom');
+// services/ChatRoomService.js
+const ChatRoom = require('../models/ChatRoom');
 
-const getChatRoomId = async (senderId, recipientId, createNewRoomIfNotExist) => {
-  let chatRoom = await ChatRoom.findOne({ senderId, recipientId });
-  if (!chatRoom && createNewRoomIfNotExist) {
-    const chatId = `${senderId}_${recipientId}`;
-    chatRoom = await ChatRoom.create({ chatId, senderId, recipientId });
-    await ChatRoom.create({ chatId, senderId: recipientId, recipientId: senderId });
+class ChatRoomService {
+  async getChatRoomId(senderId, recipientId, createNewRoomIfNotExist = false) {
+    let chatRoom = await ChatRoom.findOne({ senderId, recipientId });
+    if (chatRoom) return chatRoom.chatId;
+
+    if (createNewRoomIfNotExist) {
+      const chatId = `${senderId}_${recipientId}`;
+      const senderRecipient = new ChatRoom({ chatId, senderId, recipientId });
+      const recipientSender = new ChatRoom({ chatId, senderId: recipientId, recipientId: senderId });
+
+      await senderRecipient.save();
+      await recipientSender.save();
+
+      return chatId;
+    }
+
+    return null;
   }
-  return chatRoom ? chatRoom.chatId : null;
-};
+}
 
-module.exports = {
-  getChatRoomId
-};
+module.exports = new ChatRoomService();

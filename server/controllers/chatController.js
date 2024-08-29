@@ -1,39 +1,34 @@
-const chatMessageService = require('../services/chatMessageService');
-const ChatNotification = require('../models/chatNotification');
+const ChatMessageService = require('../services/ChatMessageService');
+const WebSocket = require('ws');
 
-const processMessage = async (req, res) => {
-  const chatMessage = req.body;
+const wss = new WebSocket.Server({ noServer: true });
 
-  try {
-    const savedMsg = await chatMessageService.saveMessage(chatMessage);
+wss.on('connection', (ws, req) => {
+  ws.on('message', async (message) => {
+    try {
+      const chatMessage = JSON.parse(message);
+      const savedMsg = await ChatMessageService.saveMessage(chatMessage);
 
-    // Send notification (example, can be adapted to your needs)
-    const notification = new ChatNotification({
-      senderId: savedMsg.senderId,
-      recipientId: savedMsg.recipientId,
-      content: savedMsg.content,
-    });
-    
-    // Code to send notification to the recipient via WebSocket, etc.
+      // Gửi tin nhắn tới người nhận qua WebSocket
+      const recipientSocket = Array.from(wss.clients).find(client => client.userId === savedMsg.recipientId);
+      if (recipientSocket && recipientSocket.readyState === WebSocket.OPEN) {
+        recipientSocket.send(JSON.stringify({
+          id: savedMsg._id,
+          senderId: savedMsg.senderId,
+          recipientId: savedMsg.recipientId,
+          content: savedMsg.content
+        }));
+      }
+      console.log('Received and saved message:', chatMessage);
+    } catch (error) {
+      console.error('Error processing message:', error);
+    }
+  });
 
-    res.status(200).json(savedMsg);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to process message' });
-  }
-};
-
-const findChatMessages = async (req, res) => {
-  const { senderId, recipientId } = req.params;
-
-  try {
-    const messages = await chatMessageService.findChatMessages(senderId, recipientId);
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to load chat messages' });
-  }
-};
+  // Giả sử bạn có cơ chế để gán userId cho mỗi kết nối
+  ws.userId = req.headers['user-id']; // Cần phải được thiết lập trong khi kết nối
+});
 
 module.exports = {
-  processMessage,
-  findChatMessages
+  wss
 };
