@@ -132,7 +132,7 @@ const PromotePage = () => {
                       
                     </td>
                     <td style={{ backgroundColor: '#e0f1d4' }}>
-                    {promote.dateOrdered}
+                    {promote.user ? `${promote.user.username || promote.user.name}` : 'No user data'}
                     </td>
                     <td style={{ backgroundColor: '#d5a2f7', fontWeight: 700 }}>
                       {promote.dateOrdered}

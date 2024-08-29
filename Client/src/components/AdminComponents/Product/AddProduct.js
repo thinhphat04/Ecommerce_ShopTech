@@ -13,10 +13,11 @@ const AddProduct = () => {
   const [imagePrimary, setImagePrimary] = useState(null);
   const [imageGallery, setImageGallery] = useState([]);
   const [category, setCategory] = useState('');
-  const [categories, setCategories] = useState([]); // Add a state for categories
+  const [categories, setCategories] = useState([]);
   const [genderAgeCategory, setGenderAgeCategory] = useState('');
   const [countInStock, setCountInStock] = useState(0);
   const [sizes, setSizes] = useState(['']);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const authAdmin = JSON.parse(localStorage.getItem('authAdmin'));
 
@@ -24,7 +25,6 @@ const AddProduct = () => {
     document.title = 'ShopTECH | Add Product';
     handleLoadOptionSelected(2);
 
-    // Fetch categories from the server
     const fetchCategories = async () => {
       try {
         const res = await fetch('http://localhost:3555/api/v1/categories', {
@@ -40,13 +40,13 @@ const AddProduct = () => {
         }
 
         const data = await res.json();
-        setCategories(data); // Set the fetched categories to the state
+        setCategories(data);
       } catch (error) {
         console.error('There was a problem fetching categories:', error);
       }
     };
 
-    fetchCategories(); // Fetch categories when the component mounts
+    fetchCategories();
   }, []);
 
   const handleImagePrimaryChange = (e) => {
@@ -77,8 +77,35 @@ const AddProduct = () => {
     setSizes([...sizes, '']);
   };
 
+  const removeColourField = (index) => {
+    const updatedColours = [...colours];
+    updatedColours.splice(index, 1);
+    setColours(updatedColours);
+  };
+
+  const removeSizeField = (index) => {
+    const updatedSizes = [...sizes];
+    updatedSizes.splice(index, 1);
+    setSizes(updatedSizes);
+  };
+
+  const validateForm = () => {
+    let formErrors = {};
+    if (!name.trim()) formErrors.name = 'Product name is required';
+    if (!description.trim()) formErrors.description = 'Description is required';
+    if (!price || price <= 0) formErrors.price = 'Price must be greater than zero';
+    if (!category) formErrors.category = 'Please select a category';
+    if (!genderAgeCategory) formErrors.genderAgeCategory = 'Please select a gender/age category';
+    if (!countInStock || countInStock < 0) formErrors.countInStock = 'Stock quantity must be a positive number';
+    if (!imagePrimary) formErrors.imagePrimary = 'Primary image is required';
+
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0;
+  };
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
     const formData = new FormData();
     formData.append('name', name);
@@ -87,10 +114,10 @@ const AddProduct = () => {
     formData.append('category', category);
     formData.append('genderAgeCategory', genderAgeCategory);
     formData.append('countInStock', countInStock);
- 
     formData.append('image', imagePrimary);
+
     colours.forEach((colour, index) => {
-formData.append(`colours[${index}]`, colour);
+      formData.append(`colours[${index}]`, colour);
     });
     sizes.forEach((size, index) => {
       formData.append(`sizes[${index}]`, size);
@@ -135,12 +162,8 @@ formData.append(`colours[${index}]`, colour);
       <div id="admin-box">
         <AdminHeader />
         <div className="admin__title">
-          <label className="admin__tilte-label">
-            Have a nice day, admin!
-          </label>
-          <label className="admin__tilte-describe">
-            Add new product page
-          </label>
+          <label className="admin__title-label">Have a nice day, admin!</label>
+          <label className="admin__title-describe">Add new product page</label>
         </div>
 
         <div className="add-product__container">
@@ -157,6 +180,7 @@ formData.append(`colours[${index}]`, colour);
                     onChange={(e) => setName(e.target.value)}
                     required
                   />
+                  {errors.name && <p className="error">{errors.name}</p>}
 
                   <label className="add__label">Description</label>
                   <textarea
@@ -164,6 +188,7 @@ formData.append(`colours[${index}]`, colour);
                     onChange={(e) => setDescription(e.target.value)}
                     required
                   />
+                  {errors.description && <p className="error">{errors.description}</p>}
 
                   <label className="add__label">Product Price</label>
                   <input
@@ -172,6 +197,7 @@ formData.append(`colours[${index}]`, colour);
                     onChange={(e) => setPrice(e.target.value)}
                     required
                   />
+                  {errors.price && <p className="error">{errors.price}</p>}
 
                   <label className="add__label">Product Category</label>
                   <select
@@ -182,11 +208,12 @@ formData.append(`colours[${index}]`, colour);
                   >
                     <option value="">Select category...</option>
                     {categories.map((cat) => (
-<option key={cat._id} value={cat._id}>
+                      <option key={cat._id} value={cat._id}>
                         {cat.name}
                       </option>
                     ))}
                   </select>
+                  {errors.category && <p className="error">{errors.category}</p>}
 
                   <label className="add__label">Gender/Age Category</label>
                   <select
@@ -201,6 +228,7 @@ formData.append(`colours[${index}]`, colour);
                     <option value="unisex">Unisex</option>
                     <option value="kids">Kids</option>
                   </select>
+                  {errors.genderAgeCategory && <p className="error">{errors.genderAgeCategory}</p>}
 
                   <label className="add__label">Stock Quantity</label>
                   <input
@@ -209,30 +237,67 @@ formData.append(`colours[${index}]`, colour);
                     onChange={(e) => setCountInStock(e.target.value)}
                     required
                   />
+                  {errors.countInStock && <p className="error">{errors.countInStock}</p>}
 
-                  <label className="add__label">Colours</label>
-                  {colours.map((colour, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      className="add__input"
-                      value={colour}
-                      onChange={(e) => handleColourChange(index, e.target.value)}
-                    />
-                  ))}
-                  <button onClick={addColourField}>Add Colour</button>
+                  <div className="add__field-group">
+                    <label className="add__label">Colours</label>
+                    {colours.map((colour, index) => (
+                      <div key={index} className="input-group">
+                        <input
+                          type="text"
+                          className="add__input"
+                          value={colour}
+                          onChange={(e) => handleColourChange(index, e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          className="add__btn-add-small"
+                          onClick={addColourField}
+                        >
+                          +
+                        </button>
+                        {colours.length > 1 && (
+                          <button
+                            type="button"
+                            className="add__btn-remove-small"
+                            onClick={() => removeColourField(index)}
+                          >
+                            -
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
 
-                  <label className="add__label">Sizes</label>
-                  {sizes.map((size, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      className="add__input"
-                      value={size}
-                      onChange={(e) => handleSizeChange(index, e.target.value)}
-                    />
-                  ))}
-                  <button onClick={addSizeField}>Add Size</button>
+                  <div className="add__field-group">
+                    <label className="add__label">Sizes</label>
+                    {sizes.map((size, index) => (
+                      <div key={index} className="input-group">
+                        <input
+                          type="text"
+                          className="add__input"
+                          value={size}
+                          onChange={(e) => handleSizeChange(index, e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          className="add__btn-add-small"
+                          onClick={addSizeField}
+                        >
+                          +
+                        </button>
+                        {sizes.length > 1 && (
+                          <button
+                            type="button"
+                            className="add__btn-remove-small"
+                            onClick={() => removeSizeField(index)}
+                          >
+                            -
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
 
                   <label className="add__label">Primary Image</label>
                   <input
@@ -242,50 +307,42 @@ formData.append(`colours[${index}]`, colour);
                     accept="image/*"
                     required
                   />
+                           {errors.imagePrimary && <p className="error">{errors.imagePrimary}</p>}
 
-                  <label className="add__label">Gallery Images</label>
-                  <input
-                    type="file"
-                    className="add__input"
-                    onChange={handleImageGalleryChange}
-                    accept="image/*"
-                    multiple
-                  />
+<label className="add__label">Gallery Images</label>
+<input
+  type="file"
+  className="add__input"
+  onChange={handleImageGalleryChange}
+  accept="image/*"
+  multiple
+/>
+</div>
+</div>
 
-                  {/* <label className="add__label">Product Status</label>
-                  <select
-                    className="add__input"
-                    onChange={(e) => setStatus(e.target.value)}
-                    value={status}
-                  >
-<option value="">Select value...</option>
-                    <option value="In Stock">In Stock</option>
-                    <option value="Out of Stock">Out of Stock</option>
-                  </select> */}
+<div className="button-container">
+<button className="add__btn-confirm" onClick={handleAddProduct}>
+Confirm
+<i className="add__btn-icon fa fa-check"></i>
+</button>
 
-                  <button className="add__btn-confirm" onClick={handleAddProduct}>
-                    Confirm
-                    <i className="add__btn-icon fa fa-check"></i>
-                  </button>
-                </div>
-              </div>
-
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate('/admin/product');
-                }}
-                className="add__btn-close"
-              >
-                Close
-                <i className="add__btn-icon fa fa-sign-out"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+<button
+onClick={(e) => {
+  e.preventDefault();
+  navigate('/admin/product');
+}}
+className="add__btn-close"
+>
+Close
+<i className="add__btn-icon fa fa-sign-out"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</>
+);
 };
 
 export default AddProduct;

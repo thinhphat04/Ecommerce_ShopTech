@@ -345,7 +345,8 @@ exports.addProduct = async (req, res) => {
         .status(500)
         .json({ message: 'The product could not be created' });
     }
-    return res.status(201).json(product);
+    //add ngo thinh phat
+    return res.status(201).json({ success: true, message: 'Product created successfully', product });
   } catch (err) {
     if (err instanceof multer.MulterError) {
       return res.status(err.code).json({ message: err.message });
@@ -405,7 +406,8 @@ exports.editProduct = async (req, res) => {
     if (!updatedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    return res.json(updatedProduct);
+    // return res.json(updatedProduct);
+    return res.status(201).json({ success: true, message: 'Product edit successfully', updatedProduct });
   } catch (err) {
     if (err instanceof multer.MulterError) {
       return res.status(err.code).json({ message: err.message });
@@ -483,7 +485,9 @@ exports.deleteProduct = async (req, res) => {
     // Delete the product
     await Product.findByIdAndDelete(productId);
 
-    return res.status(204).end(); // 204 No Content for a successful deletion
+   // return res.status(204).end(); // 204 No Content for a successful deletion
+       //add ngo thinh phat
+       return res.status(201).json({ success: true, message: 'Product delete successfully', product });
   } catch (error) {
     console.error(`Error deleting product: ${error.message}`);
     return res.status(500).json({ message: error.message });

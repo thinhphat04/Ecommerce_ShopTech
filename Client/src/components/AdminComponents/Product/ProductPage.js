@@ -145,7 +145,7 @@ const ProductPage = () => {
                         }}
                         className="admin__item-info-content"
                       >
-                        {Number(product.price).toLocaleString() || 'Trống!'} VNĐ{' '}
+                        {Number(product.price).toLocaleString() || 'Trống!'} ${' '}
                       </p>
                     </div>
                     <div className="admin__item-eidt">

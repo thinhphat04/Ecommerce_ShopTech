@@ -70,6 +70,7 @@
   height: 180px;
   object-fit: contain;
 }
+
 .info-admin-product__group--custom {
   transform: translateY(-85px) !important;
   height: 650px !important;
@@ -419,4 +420,139 @@
   border: 1px solid var(--primary-color);
   border-radius: 6px;
   margin: 0 10px;
+}
+
+/* custom ngo thinh phat ui / ux  */
+
+/* General button styling */
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  /* Align buttons to the right */
+  margin-top: 20px;
+  /* Space above the buttons */
+  padding-right: 20px;
+  /* Optional: add padding to the right */
+}
+
+.add__btn-confirm,
+.add__btn-close {
+  padding: 10px 20px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  border-radius: 6px;
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+  /* Space between buttons */
+}
+
+/* Confirm button (Save) styles */
+.add__btn-confirm {
+  background-color: #2d7d55;
+  /* Blue background */
+}
+
+.add__btn-confirm:hover {
+  background-color: #0069d9;
+  /* Darker blue on hover */
+}
+
+/* Close button styles */
+.add__btn-close {
+  background-color: #dc3545;
+  /* Red background */
+}
+
+.add__btn-close:hover {
+  background-color: #c82333;
+  /* Darker red on hover */
+}
+
+/* Icon styling inside buttons */
+.add__btn-icon {
+  margin-left: 8px;
+  /* Adds space between text and icon */
+  font-size: 1.4rem;
+}
+
+.add__field-group {
+  margin-bottom: 15px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+/* 
+.add__input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+} */
+
+/* Styles for the add/remove buttons in the form */
+.add__btn-add-small,
+.add__btn-remove-small {
+  background-color: #28a745;
+  /* Green for the "+" button */
+  color: white;
+  border: none;
+  font-size: 1.4rem;
+  width: 36px;
+  height: 36px;
+  margin-left: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the "+" button */
+.add__btn-add-small:hover {
+  background-color: #218838;
+}
+
+/* Styles for the "-" button */
+.add__btn-remove-small {
+  background-color: #dc3545;
+  /* Red for the "-" button */
+}
+
+/* Hover effect for the "-" button */
+.add__btn-remove-small:hover {
+  background-color: #c82333;
+}
+
+/* Optional: Adjusting the spacing between buttons */
+.input-group .add__btn-add-small,
+.input-group .add__btn-remove-small {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+/* Error message styling */
+/* Add this CSS to your existing stylesheet */
+
+/* Error message styling */
+.error {
+  color: red;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+  display: block;
 }

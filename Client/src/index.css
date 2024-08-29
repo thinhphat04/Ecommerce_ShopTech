@@ -177,3 +177,47 @@ input[type='range'] {
   font-weight: bold;
   border-radius: 10px;
 }
+
+/* Custom styles for the delete button */
+.add__btn-delete {
+  background-color: #dc3545;
+  /* Red background for delete */
+  padding: 10px 20px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #fff;
+  /* White text color */
+  border: none;
+  /* Remove border */
+  border-radius: 6px;
+  /* Rounded corners */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-left: 10px;
+  /* Space between buttons */
+  cursor: pointer;
+  /* Pointer cursor on hover */
+}
+
+.add__btn-delete:hover {
+  background-color: #c82333;
+  /* Darker red on hover */
+  transform: scale(1.05);
+  /* Slightly increase size on hover */
+}
+
+.add__btn-delete:active {
+  background-color: #bd2130;
+  /* Even darker red when active */
+  transform: scale(1);
+  /* Reset size when clicked */
+}
+
+/* Icon styling inside the delete button */
+.add__btn-icon {
+  margin-left: 8px;
+  /* Adds space between text and icon */
+  font-size: 1.4rem;
+}

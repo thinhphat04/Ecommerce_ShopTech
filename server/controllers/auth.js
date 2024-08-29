@@ -46,16 +46,21 @@ exports.login = async (req, res) => {
     // we will remove it after
     const user = await User.findOne({ email }).select('-cart');
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: 'User not found!\nCheck your email and try again' });
+      return (
+        res
+          .status(404)
+          // email enumeration is a security risk, so we don't want to give the user a
+          // hint that the email is the problem
+          // .json({ message: 'User not found!\nCheck your email and try again' });
+          .json({ message: 'Incorrect email or password!' })
+      );
     }
     if (bcrypt.compareSync(password, user.passwordHash)) {
       const accessToken = jwt.sign(
         { id: user.id, isAdmin: user.isAdmin },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: '60d',
+          expiresIn: '24h',
         }
       );
 
@@ -74,7 +79,9 @@ exports.login = async (req, res) => {
       user.passwordHash = undefined;
       return res.json({ ...user._doc, accessToken, refreshToken });
     }
-    return res.status(400).json({ message: 'Incorrect password!' });
+    // we don't want to give the user a hint that the password is the problem
+    // return res.status(400).json({ message: 'Incorrect password!' });
+    return res.status(400).json({ message: 'Incorrect email or password!' });
   } catch (err) {
     return res.status(500).json({ type: err.name, message: err.message });
   }
@@ -131,28 +138,14 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     // Send an email with the OTP
-    const emailHtmlContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
-        <h2 style="color: #333;">Password Reset Request</h2>
-        <p style="font-size: 16px; color: #555;">Hello,</p>
-        <p style="font-size: 16px; color: #555;">
-          We received a request to reset your password. Please use the OTP below to reset your password. This OTP is valid for the next 10 minutes.
-        </p>
-        <div style="text-align: center; margin: 20px 0;">
-          <span style="display: inline-block; font-size: 24px; font-weight: bold; padding: 10px 20px; background-color: #007BFF; color: #fff; border-radius: 5px;">${otp}</span>
-        </div>
-        <p style="font-size: 16px; color: #555;">
-          If you did not request a password reset, please ignore this email or contact our support team.
-        </p>
-        <p style="font-size: 16px; color: #555;">
-          Thank you,<br>
-          The Support Team
-        </p>
-      </div>
-    `;
-
-    await mailSender.sendMail(email, 'Password Reset Request', emailHtmlContent);
-    return res.status(200).send(emailHtmlContent);
+    await mailSender.sendMail(
+      email,
+      'Password Reset OTP',
+      `Your OTP for password reset is: ${otp}`,
+      'Password reset OTP sent to your email',
+      'Error sending email'
+    );
+    return res.status(200).end();
   } catch (error) {
     console.error('Reset Password error:', error);
     return res.status(500).json({ type: error.name, message: error.message });
