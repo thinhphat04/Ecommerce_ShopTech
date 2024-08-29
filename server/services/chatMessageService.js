@@ -1,13 +1,28 @@
-const ChatMessage = require('../models/chatMessage');
+// services/ChatMessageService.js
+const ChatMessage = require('../models/ChatMessage');
+const ChatRoomService = require('./ChatRoomService');
 
-const saveMessage = async (chatMessage) => {
-  try {
-    const savedMessage = await ChatMessage.create(chatMessage);
+class ChatMessageService {
+  async saveMessage(chatMessage) {
+    try {
+        
+    
+    const chatId = await ChatRoomService.getChatRoomId(chatMessage.senderId, chatMessage.recipientId, true);
+    chatMessage.chatId = chatId;
+    const savedMessage = await new ChatMessage(chatMessage).save();
+    console.log('Message saved:', savedMessage);
     return savedMessage;
-  } catch (error) {
+} catch (error) {
     console.error('Error saving message:', error);
-    throw error;
+}
   }
-};
 
-module.exports = { saveMessage };
+  async findChatMessages(senderId, recipientId) {
+    const chatId = await ChatRoomService.getChatRoomId(senderId, recipientId, false);
+    if (!chatId) return [];
+
+    return await ChatMessage.find({ chatId }).sort({ timestamp: -1 });
+  }
+}
+
+module.exports = new ChatMessageService();

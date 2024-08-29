@@ -22,6 +22,8 @@ import {
 } from './components/AdminComponents/Promote';
 import FeedbackPage from './components/AdminComponents/Feedback/FeedbackPage';
 
+import ListCustomers from './components/AdminComponents/Chat/ListCustomers';
+import ChatPage from './components/AdminComponents/Chat/ChatPage';
 // Client components
 import Home from './components/ConsumerComponents/Home/Home';
 import {
@@ -85,6 +87,9 @@ function App() {
             <Route path="/admin/promote/info/:id" element={<InfoPromote />} />
 
             <Route path="/admin/feedback" element={<FeedbackPage />} />
+
+            <Route path="/admin/chat" element={<ListCustomers />} />
+            <Route path="/admin/chat/:userId" element={<ChatPage />} />
 
             {/* ----------------------------- Page not found ------------------------------ */}
             <Route path="/admin/*" element={<PageNotFound />} />

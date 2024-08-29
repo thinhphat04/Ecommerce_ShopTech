@@ -134,6 +134,19 @@ const AdminSidebar = () => {
           ></i>
           Feedback || Review
         </div>
+        <div
+          className="sidebar__component-item"
+          onClick={() => {
+            handleNevigate(`/admin/chat`);
+          }}
+        >
+          <i
+            className="sidebar__component-item-icon fa fa-comment"
+            aria-hidden="true"
+          ></i>
+          Chat with Customer
+        </div>
+
       </div>
 
       <div className="sidebar__component">

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ecomly/core/common/singletons/cache.dart';
 import 'package:http/http.dart' as http;
 
 class ChatService {
@@ -12,6 +13,7 @@ class ChatService {
     final response = await http.get(
       Uri.parse('$serverAddress/messages/$senderId/$recipientId'),
       headers: {
+        'Authorization': 'Bearer ${Cache.instance.sessionToken}',
         'Content-Type': 'application/json',
       },
     );
