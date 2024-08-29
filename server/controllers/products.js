@@ -35,18 +35,21 @@ exports.getProducts = async (req, res) => {
       products = await Product.find(query)
         .select('-images -reviews -sizes')
         .skip((page - 1) * pageSize)
-        .limit(pageSize);
+        .limit(pageSize)
+        .populate('category', 'name');
     } else if (req.query.category) {
       // product name, price, description, image, colours, rating
       products = await Product.find({ category: req.query.category })
         .select('-images -reviews -sizes')
         .skip((page - 1) * pageSize)
-        .limit(pageSize);
+        .limit(pageSize)
+        .populate('category', 'name');
     } else {
       products = await Product.find()
         .select('-images -reviews -sizes')
         .skip((page - 1) * pageSize)
-        .limit(pageSize);
+        .limit(pageSize)
+        .populate('category', 'name');
     }
     if (!products) {
       return res.status(404).json({ message: 'Products not found' });

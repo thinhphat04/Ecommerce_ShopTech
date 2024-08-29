@@ -81,7 +81,7 @@ const InfoPromote = () => {
       try {
 
           axios
-            .patch(`http://localhost:3555/api/v1/admin/orders/${id}`, {
+            .put(`http://localhost:3555/api/v1/admin/orders/${id}`, {
               status:status
             },{
               headers: {
@@ -92,7 +92,7 @@ const InfoPromote = () => {
             .then((res) => {
               console.log('resKHAI:: ', res)
               if (res && res.status == 200) {
-                window.alert('Update Status Sucess!');
+                window.alert('Update Status Success!');
                 handleLoadingPage(1);
                 window.setTimeout(() => {
                   navigate(`/admin/promote`);
