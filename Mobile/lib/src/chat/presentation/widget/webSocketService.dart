@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ecomly/core/common/singletons/cache.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:ecomly/core/utils/constants/network_constants.dart';
 
@@ -6,14 +7,17 @@ class WebSocketService {
   WebSocketChannel? channel;
 
   void connect(Function(String) onMessageReceived) {
-    // Kết nối đến WebSocket server
+    var senderId =
+        Cache.instance.userId!; // Thay thế bằng giá trị thực tế của senderId
+    final wsUrl = '${NetworkConstants.websocketurl}?userId=$senderId';
+    print('Attempting to connect to WebSocket at: $wsUrl');
+
     channel = WebSocketChannel.connect(
-      Uri.parse(NetworkConstants.websocketurl),
+      Uri.parse(wsUrl),
     );
 
-    // Lắng nghe sự kiện khi kết nối thành công
     channel?.stream.listen(
-          (message) {
+      (message) {
         print('Message received: $message');
         onMessageReceived(message); // Gọi callback khi nhận tin nhắn
       },
@@ -26,9 +30,9 @@ class WebSocketService {
     );
 
     // Đợi một chút để kết nối được thiết lập và kiểm tra trạng thái kết nối
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       if (channel != null) {
-        print('Connected to WebSocket');
+        print('Connected to WebSocket at: $wsUrl');
       } else {
         print('Failed to connect to WebSocket');
       }
@@ -37,6 +41,7 @@ class WebSocketService {
 
   void sendMessage(String recipientId, String content, String senderId) {
     final message = {
+      'chatId': '${senderId}_$recipientId',
       'senderId': senderId,
       'recipientId': recipientId,
       'content': content,
@@ -44,7 +49,7 @@ class WebSocketService {
     };
     if (channel != null) {
       final encodedMessage = jsonEncode(message);
-      print('Sending message: $encodedMessage');  // In ra message đang gửi
+      print('Sending message: $encodedMessage');
       channel?.sink.add(encodedMessage);
     } else {
       print('Cannot send message: WebSocket is not connected.');

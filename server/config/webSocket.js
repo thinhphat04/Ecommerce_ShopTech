@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const ChatMessageService = require('../services/ChatMessageService'); // Đảm bảo đường dẫn chính xác
+const ChatMessageService = require('../services/ChatMessageService');
 
 const isJSON = (string) => {
   try {
@@ -10,66 +10,55 @@ const isJSON = (string) => {
   }
 };
 
-const initWebSocketServer = (httpServer) => {
-  const wss = new WebSocket.Server({ noServer: true });
+const initWebSocketServer = () => {
+  const wss = new WebSocket.Server({ port: 8000 });
+  const clients = new Map(); // Để theo dõi các client đã kết nối
 
   wss.on('connection', (ws, req) => {
+    const userId = new URLSearchParams(req.url.split('?')[1]).get('userId'); // Lấy userId từ query string
+    console.log(`User connected: ${userId}`);
+    clients.set(userId, ws);
+
     ws.on('message', async (message) => {
-      try {
-        let messageString;
+      console.log('Received message:', message);
+    
+      if (isJSON(message)) {
+        const { chatId, recipientId, senderId, content, timestamp } = JSON.parse(message);
+        console.log('Parsed message:', { chatId, recipientId, senderId, content, timestamp });
+    
+        const recipient = clients.get(recipientId);
+        if (recipient && recipient.readyState === WebSocket.OPEN) {
+          const messageToSend = {
+            chatId,
+            senderId,
+            recipientId,
+            content,
+            timestamp: new Date().toISOString(),
+          };
+    
+          recipient.send(JSON.stringify(messageToSend));
+          console.log('Message sent to recipient:', messageToSend);
+           await ChatMessageService.saveMessage(messageToSend);
 
-        // Kiểm tra loại dữ liệu nhận được
-        if (Buffer.isBuffer(message)) {
-          // Nếu nhận được Buffer, chuyển đổi thành chuỗi
-          messageString = message.toString();
-        } else if (typeof message === 'string') {
-          // Nếu nhận được chuỗi, sử dụng nó trực tiếp
-          messageString = message;
         } else {
-          throw new Error('Unexpected message format');
+          console.log(`Recipient ${recipientId} not connected`);
         }
-
-        console.log('Message received (as string):', messageString);
-
-        // Kiểm tra xem chuỗi có phải là JSON hợp lệ không
-        if (isJSON(messageString)) {
-          const chatMessage = JSON.parse(messageString);
-          const savedMsg = await ChatMessageService.saveMessage(chatMessage);
-
-          // Tìm kiếm và gửi tin nhắn đến người nhận
-          const recipientSocket = Array.from(wss.clients).find(client => client.userId === savedMsg.recipientId);
-          if (recipientSocket && recipientSocket.readyState === WebSocket.OPEN) {
-            recipientSocket.send(JSON.stringify({
-              id: savedMsg._id,
-              senderId: savedMsg.senderId,
-              recipientId: savedMsg.recipientId,
-              content: savedMsg.content
-            }));
-          }
-          console.log('Received message on Server:', chatMessage);
-        } else {
-          console.error('Received message is not valid JSON.');
-        }
-      } catch (error) {
-        console.error('Error processing message:', error);
+      } else {
+        console.log('Invalid JSON message:', message);
       }
     });
 
+    ws.on('close', () => {
+      console.log(`User disconnected: ${userId}`);
+      clients.delete(userId);
+    });
+
     ws.on('error', (error) => {
-      console.error('WebSocket error:', error);
+      console.error(`WebSocket error for user ${userId}:`, error);
     });
   });
 
-  // Khởi động WebSocket server
-  httpServer.on('upgrade', (request, socket, head) => {
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      // Giả sử bạn lưu thông tin người dùng vào ws.userId
-      ws.userId = request.headers['user-id'];
-      wss.emit('connection', ws, request);
-    });
-  });
-
-  return wss;
+  console.log('WebSocket server is running on ws://localhost:8000');
 };
 
 module.exports = initWebSocketServer;

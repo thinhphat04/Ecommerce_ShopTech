@@ -57,12 +57,12 @@ class _ChatScreenState extends State<ChatScreen> {
   void _loadChatHistory() async {
     try {
       final chatHistory =
-      await _chatService.fetchChatHistory(_userId, _recipientId);
+          await _chatService.fetchChatHistory(_userId, _recipientId);
       setState(() {
         _messages.addAll(chatHistory.map((message) => {
-          'text': message['text'],
-          'isMine': message['isMine'],
-        }));
+              'text': message['text'],
+              'isMine': message['isMine'],
+            }));
       });
     } catch (e) {
       print('Failed to load chat history: $e');
@@ -85,6 +85,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Sắp xếp _messages theo thứ tự giảm dần
+    // _messages.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
     return Scaffold(
       appBar: AppBar(
         title: const Text('Customer Support'),
@@ -101,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 return Align(
                   alignment:
-                  isMine ? Alignment.centerRight : Alignment.centerLeft,
+                      isMine ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.symmetric(
                         vertical: 4.0, horizontal: 8.0),
