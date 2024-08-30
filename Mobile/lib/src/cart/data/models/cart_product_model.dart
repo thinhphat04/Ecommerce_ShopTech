@@ -58,6 +58,7 @@ class CartProductModel extends CartProduct {
     String? productName,
     String? productImage,
     double? productPrice,
+    double? price, // Thêm đối số price
     String? selectedSize,
     Color? selectedColour,
     bool? productExists,
@@ -69,7 +70,8 @@ class CartProductModel extends CartProduct {
       quantity: quantity ?? this.quantity,
       productName: productName ?? this.productName,
       productImage: productImage ?? this.productImage,
-      productPrice: productPrice ?? this.productPrice,
+      productPrice:
+          price ?? productPrice ?? this.productPrice, // Sử dụng price nếu có
       selectedSize: selectedSize ?? this.selectedSize,
       selectedColour: selectedColour ?? this.selectedColour,
       productExists: productExists ?? this.productExists,

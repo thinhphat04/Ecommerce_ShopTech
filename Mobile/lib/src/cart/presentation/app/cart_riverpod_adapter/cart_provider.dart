@@ -87,7 +87,6 @@ class CartAdapter extends _$CartAdapter {
     state = const FetchingCart();
 
     final result = await _getCart(userId);
-
     result.fold(
       (failure) => state = CartError(failure.errorMessage),
       (cart) => state = CartFetched(cart),

@@ -33,11 +33,24 @@ class _CartViewState extends ConsumerState<CartView> {
   final cartAdapterFamilyKey = GlobalKeys.cartScreenAdapterFamilyKey;
   bool removingBulkProducts = false;
 
+// // //Bản gốc
   Future<void> getCart() async {
     return ref
         .read(cartAdapterProvider(cartAdapterFamilyKey).notifier)
         .getCart(Cache.instance.userId!);
   }
+//Bản test
+//   Future<void> getCart() async {
+//   final cartData = await fetchCartDataFromDatabase(); // Đây là giả định của phương thức lấy dữ liệu từ DB
+
+//   // In ra kết quả để kiểm tra
+//   for (var product in cartData) {
+//     print("Price từ DB: ${product.productPrice}");
+//   }
+
+//   // Sau khi chắc chắn có dữ liệu đúng, cập nhật state
+//   ref.read(cartAdapterProvider(cartAdapterFamilyKey).notifier).setCart(cartData);
+// }
 
   @override
   void initState() {
@@ -53,6 +66,7 @@ class _CartViewState extends ConsumerState<CartView> {
       cartAdapterProvider(cartAdapterFamilyKey),
     );
     final cartProductNotifier = ref.watch(cartProductNotifierProvider);
+
     ref.listen(cartAdapterProvider(cartAdapterFamilyKey), (previous, next) {
       if (next is CartError) {
         CoreUtils.showSnackBar(
@@ -168,6 +182,10 @@ class _CartViewState extends ConsumerState<CartView> {
                         itemCount: cartAdapter.cart.length,
                         itemBuilder: (context, index) {
                           final product = cartAdapter.cart[index];
+                          // product.productPrice = product.productPrice;
+                          print(
+                              "Giá sản phẩm từ database: ${product.productPrice}");
+
                           return CartProductTile(
                             product,
                             mainPageFamilyKey: cartAdapterFamilyKey,

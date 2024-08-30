@@ -24,9 +24,21 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 class ProductDetailsView extends ConsumerStatefulWidget {
-  const ProductDetailsView(this.productId, {super.key});
+  // const ProductDetailsView(this.productId, {super.key});
+
+  // final String productId;
+
+  // Constructor với 1 tham số
+  const ProductDetailsView(this.productId, {Key? key})
+      : price = null, // Khởi tạo price với giá trị mặc định
+        super(key: key);
+
+  // Constructor named với 2 tham số
+  const ProductDetailsView.withPrice(this.productId, this.price, {Key? key})
+      : super(key: key);
 
   final String productId;
+  final double? price;
 
   @override
   ConsumerState<ProductDetailsView> createState() => _ProductDetailsViewState();
@@ -164,7 +176,7 @@ class _ProductDetailsViewState extends ConsumerState<ProductDetailsView> {
                             child: Container(
                               width: 60.0,
                               height: 60.0,
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 4.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -200,7 +212,7 @@ class _ProductDetailsViewState extends ConsumerState<ProductDetailsView> {
                                 ),
                                 const Gap(10),
                                 Text(
-                                  '\$${product.price.toStringAsFixed(2)}',
+                                  '\$${widget.price ?? product.price.toStringAsFixed(2)}',
                                   style: TextStyles.headingMedium1.orange,
                                 ),
                               ],
@@ -322,6 +334,9 @@ class _ProductDetailsViewState extends ConsumerState<ProductDetailsView> {
                               quantity: 1,
                               selectedSize: selectedSize,
                               selectedColour: selectedColour,
+                              //Bản gốc không có dòng duoi day
+                              price: widget.price ??
+                                  product.price, // Thêm thuộc tính price ở đây
                             ),
                           );
                     },
@@ -346,7 +361,7 @@ class _ProductDetailsViewState extends ConsumerState<ProductDetailsView> {
       builder: (context) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: EdgeInsets.all(10),
+          insetPadding: const EdgeInsets.all(10),
           child: GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(

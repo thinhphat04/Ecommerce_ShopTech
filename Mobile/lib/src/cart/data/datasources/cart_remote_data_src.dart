@@ -64,6 +64,7 @@ class CartRemoteDataSrcImpl implements CartRemoteDataSrc {
         headers: Cache.instance.sessionToken!.toHeaders,
       );
       final payload = jsonDecode(response.body);
+
       await NetworkUtils.renewToken(response);
       if (response.statusCode != 200) {
         payload as DataMap;
@@ -176,6 +177,8 @@ class CartRemoteDataSrcImpl implements CartRemoteDataSrc {
             'selectedSize': cartProduct.selectedSize,
           if (cartProduct.selectedColour != null)
             'selectedColour': cartProduct.selectedColour!.hex,
+          //Thêm doan code sau de kiem tra price cua product
+          if (cartProduct.productPrice != 0) 'price': cartProduct.productPrice
         }),
       );
       await NetworkUtils.renewToken(response);
