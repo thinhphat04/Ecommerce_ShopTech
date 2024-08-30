@@ -129,7 +129,7 @@ const AdminSidebar = () => {
           }}
         >
           <i
-            className="sidebar__component-item-icon fa fa-tag"
+            className="sidebar__component-item-icon fa fa-shopping-cart"
             aria-hidden="true"
           ></i>
           Orders
@@ -149,7 +149,7 @@ const AdminSidebar = () => {
         <div
           className="sidebar__component-item"
           onClick={() => {
-            handleNevigate(`/admin/chat`);
+            handleNavigate(`/admin/chat`);
           }}
         >
           <i

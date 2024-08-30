@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Thay useHistory bằng useNavigate
+import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '../Common/AdminSidebar';
 import axios from 'axios';
+import './ListCustomers.css'; // Import the CSS file
 
 const ListCustomers = () => {
   const [users, setUsers] = useState([]);
-  const navigate = useNavigate(); // Thay history bằng navigate
+  const navigate = useNavigate();
 
   const authAdmin = JSON.parse(window.localStorage.getItem('authAdmin'));
 
@@ -20,7 +21,6 @@ const ListCustomers = () => {
       
       if (response && response.data) {
         const filteredUsers = response.data.filter(user => !user.isAdmin);
-        // Cập nhật state với danh sách user từ API
         setUsers(filteredUsers);
       } else {
         console.warn('No users found or no response data');
@@ -36,20 +36,22 @@ const ListCustomers = () => {
   }, []);
 
   const handleSupportClick = (userId) => {
-    // Điều hướng tới trang chat với id của user được chọn
-    navigate(`/admin/chat/${userId}`); // Thay history.push bằng navigate
+    navigate(`/admin/chat/${userId}`);
   };
 
   return (
     <>
       <AdminSidebar />
-      <div id="admin-box">
-        <h2>User List</h2>
-        <ul>
+      <div id="admin-box" className="list-customers-container">
+        <h2 className="list-customers-title">Customer List</h2>
+        <ul className="list-customers-list">
           {users.map((user) => (
-            <li key={user._id} style={{ marginBottom: '10px' }}>
-              {user.name}
-              <button onClick={() => handleSupportClick(user._id)} style={{ marginLeft: '10px' }}>
+            <li key={user._id} className="list-customers-item">
+              <span className="list-customers-name">{user.name}</span>
+              <button 
+                className="list-customers-support-btn"
+                onClick={() => handleSupportClick(user._id)}
+              >
                 Support
               </button>
             </li>
