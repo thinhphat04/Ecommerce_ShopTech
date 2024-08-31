@@ -37,7 +37,10 @@ exports.getUserCart = async function (req, res) {
       } else {
         currentCartProductData['productName'] = product.name;
         currentCartProductData['productImage'] = product.image;
-        currentCartProductData['productPrice'] = product.price;
+        currentCartProductData['productPrice'] = product.price !== cartProduct.productPrice ? cartProduct.productPrice : product.price;
+        // Log the price comparison result
+  console.log(`Product ID: ${product._id}, Product Price: ${product.price}, Cart Product Price: ${cartProduct.productPrice}, Used Price: ${currentCartProductData['productPrice']}`);
+
         if (
           !cartProduct.reserved &&
           product.countInStock < cartProduct.quantity
@@ -127,12 +130,16 @@ exports.addToCart = async function (req, res) {
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+    //Thêm code 2 dòng dưới ở đây
+    console.log("req.body", req.body);
+    const productPrice = (req.body.price > 0 && req.body.price !== product.price) ? req.body.price : product.price;
+
     const cartProduct = await new CartProduct({
       ...req.body,
       product: productId,
       productName: product.name,
       productImage: product.image,
-      productPrice: product.price,
+      productPrice: productPrice,
       reserved: true,
     }).save({ session });
 

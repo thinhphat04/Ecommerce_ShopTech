@@ -83,6 +83,17 @@ final router = GoRouter(
         state.pathParameters['productId'] as String,
       ),
     ),
+
+    // This route is for testing purposes only
+    GoRoute(
+      path: '/products/:productId/:price',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) {
+        final productId = state.pathParameters['productId']!;
+        final price = double.parse(state.pathParameters['price']!);
+        return ProductDetailsView.withPrice(productId, price);
+      },
+    ),
     GoRoute(
       path: '/products/:productId/reviews',
       parentNavigatorKey: rootNavigatorKey,

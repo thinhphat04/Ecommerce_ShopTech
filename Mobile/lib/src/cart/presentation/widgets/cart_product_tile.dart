@@ -4,6 +4,7 @@ import 'package:ecomly/core/extensions/widget_extensions.dart';
 import 'package:ecomly/core/res/styles/colours.dart';
 import 'package:ecomly/core/res/styles/text.dart';
 import 'package:ecomly/core/utils/core_utils.dart';
+import 'package:ecomly/src/cart/data/models/cart_product_model.dart';
 import 'package:ecomly/src/cart/domain/entities/cart_product.dart';
 import 'package:ecomly/src/cart/presentation/app/cart_product_riverpod_notifier/cart_product_notifier.dart';
 import 'package:ecomly/src/cart/presentation/app/cart_riverpod_adapter/cart_provider.dart';
@@ -78,8 +79,7 @@ class _CartProductTileState extends ConsumerState<CartProductTile> {
   @override
   void initState() {
     super.initState();
-    // product =
-    //     (widget.product as CartProductModel).copyWith(productOutOfStock: true);
+    // product = (widget.product as CartProductModel).copyWith();
     product = widget.product;
   }
 
