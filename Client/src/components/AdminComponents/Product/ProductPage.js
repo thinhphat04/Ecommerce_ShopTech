@@ -9,27 +9,20 @@ import EditButtonProduct from '../../EditButton/EditButtonProduct';
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [countProduct, setCountProduct] = useState(0);
-
   const [loading, setLoading] = useState(true);
   const authAdmin = JSON.parse(localStorage.getItem('authAdmin'));
 
-  console.log('authAdmin.accessToken:::', authAdmin.accessToken)
-
-
-
-
-    useEffect(() => {
-      document.title = 'ShopTECH | Dữ liệu sản phẩm';
-      const fetchAPI = () => {
-        fetch('http://localhost:3555/api/v1/products', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${authAdmin.accessToken}` , 
-            'Content-Type': 'application/json'
-          }
-        })
+  useEffect(() => {
+    document.title = 'ShopTECH | Dữ liệu sản phẩm';
+    const fetchAPI = () => {
+      fetch('http://localhost:3555/api/v1/products', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authAdmin.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      })
         .then((res) => {
-          console.log('res::', res)
           if (!res.ok) {
             throw new Error('Network response was not ok');
           }
@@ -43,17 +36,11 @@ const ProductPage = () => {
         .catch((error) => {
           console.error('There was a problem with your fetch operation:', error);
         });
-      };
-      
-      fetchAPI();
-      handleLoadOptionSelected(2);
-    }, []);
+    };
 
-    console.log('products:::', products)
-
-
-
-
+    fetchAPI();
+    handleLoadOptionSelected(2);
+  }, []);
 
   const navigate = useNavigate();
 
@@ -62,6 +49,21 @@ const ProductPage = () => {
     window.setTimeout(() => {
       navigate('/admin/product/add');
     }, 1000);
+  };
+
+  const createProductLink = (productId) => {
+    return `http://localhost:3555/products/${productId}/?pricedeal=10`;
+  };
+
+  const handleCreateLink = (productId) => {
+    const productLink = createProductLink(productId);
+    navigator.clipboard.writeText(productLink)
+      .then(() => {
+        alert(`Link copied to clipboard: ${productLink}`);
+      })
+      .catch((err) => {
+        console.error('Failed to copy link: ', err);
+      });
   };
 
   return (
@@ -162,6 +164,14 @@ const ProductPage = () => {
                         <EditButtonProduct product={product} />
                       </div>
                     </div>
+                  </div>
+                  <div className="product__item-link">
+                    <button
+                      onClick={() => handleCreateLink(product._id)}
+                      className="product__btn-link"
+                    >
+                      Create PriceDeal Link
+                    </button>
                   </div>
                 </div>
               ))

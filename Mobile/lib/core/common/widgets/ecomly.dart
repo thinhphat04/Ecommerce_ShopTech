@@ -16,7 +16,7 @@ class Ecomly extends StatelessWidget {
         style: style ?? TextStyles.appLogo.white,
         children: const [
           TextSpan(
-            text: 'tech',
+            text: 'Tech',
             style: TextStyle(color: Colours.lightThemeSecondaryColour),
           ),
         ],

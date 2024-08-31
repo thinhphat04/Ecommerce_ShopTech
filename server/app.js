@@ -18,10 +18,10 @@ require('dotenv').config();
 const app = express();
 const env = process.env;
 const server = http.createServer(app);
-
 const API = env.API_URL;
 
-// Middleware configurations
+app.use(`${API}/checkout/webhook`, express.raw({ type: 'application/json' }));
+// Middleware configurations // đòng này làm chặn stripe webhook // nếu không có dòng này thì stripe sẽ không gửi được webhook
 app.use(cors({
   origin: 'http://localhost:3000', // React app
   methods: 'GET,POST,PUT,DELETE',
@@ -30,7 +30,7 @@ app.use(cors({
 app.use('/public', express.static('./public'));
 app.use(express.json());
 app.options('*', cors());
-app.use(`${API}/checkout/webhook`, express.raw({ type: 'application/json' }));
+
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
 app.use(authJwt());

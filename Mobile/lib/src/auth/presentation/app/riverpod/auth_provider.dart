@@ -76,13 +76,33 @@ class Auth extends _$Auth {
     );
   }
 
-  Future<void> verifyOTP({required String email, required String otp}) async {
+  // //Bản gốc
+  // Future<void> verifyOTP({required String email, required String otp}) async {
+  //   state = const AuthLoading();
+  //   final result = await _verifyOTP(VerifyOTPParams(email: email, otp: otp));
+  //   result.fold(
+  //     (failure) => state = AuthError(failure.errorMessage),
+  //     (_) => state = const OTPVerified(),
+  //   );
+  // }
+
+  //Bản test
+  Future<bool> verifyOTP({required String email, required String otp}) async {
     state = const AuthLoading();
     final result = await _verifyOTP(VerifyOTPParams(email: email, otp: otp));
+    bool isSuccess = false;
     result.fold(
-      (failure) => state = AuthError(failure.errorMessage),
-      (_) => state = const OTPVerified(),
+      (failure) {
+        state = AuthError(failure.errorMessage);
+      },
+      (_) {
+        state = const OTPVerified();
+      },
     );
+    if (result.isRight()) {
+      isSuccess = true;
+    }
+    return isSuccess;
   }
 
   Future<void> resetPassword({

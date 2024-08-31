@@ -119,7 +119,7 @@ exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // Find the user with the provided email
+    // Tìm user bằng email
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -128,30 +128,102 @@ exports.forgotPassword = async (req, res) => {
         .json({ message: 'User with that email does NOT exist' });
     }
 
-    // Generate a random 4-digit OTP
+    // Tạo mã OTP ngẫu nhiên gồm 4 chữ số
     const otp = Math.floor(1000 + Math.random() * 9000);
 
-    // Save the OTP and its expiration time to the user document
+    // Lưu mã OTP và thời gian hết hạn vào cơ sở dữ liệu
     user.resetPasswordOtp = otp;
-    user.resetPasswordOtpExpires = Date.now() + 600000; // OTP expires in 10 minutes
+    user.resetPasswordOtpExpires = Date.now() + 600000; // OTP hết hạn sau 10 phút
 
     await user.save();
 
-    // Send an email with the OTP
+    // Mẫu email HTML
+    const otpEmailTemplate = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Password Reset OTP</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f4f4;
+                  margin: 0;
+                  padding: 20px;
+                  color: #333;
+              }
+              .container {
+                  background-color: #ffffff;
+                  padding: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                  max-width: 600px;
+                  margin: 0 auto;
+              }
+              .header {
+                  text-align: center;
+                  margin-bottom: 20px;
+              }
+              .header h2 {
+                  color: #6c63ff;
+              }
+              .otp-code {
+                  font-size: 24px;
+                  font-weight: bold;
+                  color: #ff6b6b;
+                  text-align: center;
+                  margin: 20px 0;
+              }
+              .message {
+                  font-size: 16px;
+                  line-height: 1.5;
+              }
+              .footer {
+                  text-align: center;
+                  margin-top: 20px;
+                  font-size: 14px;
+                  color: #999;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="header">
+                  <h2>Password Reset Request</h2>
+              </div>
+              <div class="message">
+                  <p>Dear User,</p>
+                  <p>We received a request to reset your password. Please use the following One-Time Password (OTP) to complete the process. This OTP is valid for the next 10 minutes:</p>
+              </div>
+              <div class="otp-code">${otp}</div>
+              <div class="message">
+                  <p>If you did not request a password reset, please ignore this email or contact support if you have any concerns.</p>
+                  <p>Thank you for using our service!</p>
+              </div>
+              <div class="footer">
+                  <p>&copy; 2024 Your Company. All rights reserved.</p>
+              </div>
+          </div>
+      </body>
+      </html>
+    `;
+
+    // Gửi email chứa OTP
     await mailSender.sendMail(
       email,
       'Password Reset OTP',
-      `Your OTP for password reset is: ${otp}`,
+      otpEmailTemplate,
       'Password reset OTP sent to your email',
       'Error sending email'
     );
-    return res.status(200).end();
+
+    return res.status(200).json({ message: 'Password reset OTP sent to your email' });
   } catch (error) {
     console.error('Reset Password error:', error);
     return res.status(500).json({ type: error.name, message: error.message });
   }
 };
-
 exports.verifyPasswordResetOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;

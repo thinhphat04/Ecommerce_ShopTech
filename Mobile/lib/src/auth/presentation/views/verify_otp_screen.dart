@@ -81,14 +81,20 @@ class _VerifyOTPScreenState extends ConsumerState<VerifyOTPScreen> {
                 CoreUtils.showSnackBar(context, message: 'Invalid OTP');
               } else {
                 final router = GoRouter.of(context);
-                await ref.read(authProvider(familyKey).notifier).verifyOTP(
-                      email: widget.email,
-                      otp: otpController.text.trim(),
-                    );
-                router.pushReplacement(
-                  ResetPasswordScreen.path,
-                  extra: widget.email,
-                );
+                final isVerified =
+                    await ref.read(authProvider(familyKey).notifier).verifyOTP(
+                          email: widget.email,
+                          otp: otpController.text.trim(),
+                        );
+                if (isVerified) {
+                  router.pushReplacement(
+                    ResetPasswordScreen.path,
+                    extra: widget.email,
+                  );
+                } else {
+                  CoreUtils.showSnackBar(context,
+                      message: 'OTP verification failed');
+                }
               }
             },
             text: 'Verify',

@@ -556,3 +556,46 @@
   width: 100%;
   display: block;
 }
+
+.product__item-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.product__btn-link {
+  background-color: #FF6F61;
+  /* Soft red color */
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+  width: 50%;
+  text-align: center;
+}
+
+.product__btn-link:hover {
+  background-color: #E64A45;
+  /* Darker red on hover */
+}
+
+.product__btn-add {
+  background-color: #4CAF50;
+  /* Green */
+  color: white;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.product__btn-add:hover {
+  background-color: #45A049;
+  /* Darker green on hover */
+}
