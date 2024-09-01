@@ -45,7 +45,7 @@ const InfoPromote = () => {
     };
 
     fetchAPI();
-    handleLoadOptionSelected(3);
+    handleLoadOptionSelected(4);
   }, []);
 
   console.log('promotPayemnt:: ',promote )

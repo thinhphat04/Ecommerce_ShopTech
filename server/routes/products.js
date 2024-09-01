@@ -6,6 +6,9 @@ const router = express.Router();
 
 router.get('/', productsController.getProducts);
 
+router.get('/khai/product', productsController.getKHAIProducts);
+
+
 router.get('/search', productsController.searchProducts);
 
 // When /products/count is called without the /admin, it will redirect to this route and "count" will be used as id

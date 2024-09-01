@@ -65,6 +65,7 @@ const ChatPage = () => {
       console.error('Failed to fetch user name:', error);
     }
   };
+  
 
   const fetchChatHistory = async () => {
     try {

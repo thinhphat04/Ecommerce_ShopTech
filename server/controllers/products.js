@@ -36,25 +36,106 @@ exports.getProducts = async (req, res) => {
         .select('-images -reviews -sizes')
         .skip((page - 1) * pageSize)
         .limit(pageSize)
-        .populate('category', 'name');
+        .populate('category', 'name')
+        .sort({ dateAdded: -1 });
     } else if (req.query.category) {
       // product name, price, description, image, colours, rating
       products = await Product.find({ category: req.query.category })
         .select('-images -reviews -sizes')
         .skip((page - 1) * pageSize)
         .limit(pageSize)
-        .populate('category', 'name');
+        .populate('category', 'name')
+        .sort({ dateAdded: -1 });
     } else {
       products = await Product.find()
         .select('-images -reviews -sizes')
         .skip((page - 1) * pageSize)
         .limit(pageSize)
-        .populate('category', 'name');
+        .populate('category', 'name')
+        .sort({ dateAdded: -1 });
     }
     if (!products) {
       return res.status(404).json({ message: 'Products not found' });
     }
     return res.json(products);
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getKHAIProducts = async (req, res) => {
+  try {
+    let products;
+    const page = req.query.page || 1;
+    const pageSize = 10;
+    let totalCount;
+    let query = {};
+    // we put criteria first because in some cases, there's criteria + category filter, and if we check for category alone first, it'll catch such a case, unless we
+    // req.query.category && !req.query.criteria...
+    if (req.query.criteria) {
+      let query = {};
+      if (req.query.category) {
+        query['category'] = req.query.category;
+      }
+      switch (req.query.criteria) {
+        case 'newArrivals': {
+          // Customize the date range based on your business logic
+          const twoWeeksAgo = new Date();
+          twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 140);
+
+          query['dateAdded'] = { $gte: twoWeeksAgo };
+
+          break;
+        }
+
+        case 'popular':
+          // Customize the popularity criteria based on your business logic
+          query['rating'] = { $gte: 4.5 };
+          break;
+
+        default:
+          // Handle other criteria or return all products
+          break;
+      }
+      totalCount = await Product.countDocuments(query);
+      products = await Product.find(query)
+        .select('-images -reviews -sizes')
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .populate('category', 'name')
+        .sort({ dateAdded: -1 });
+    } else if (req.query.category) {
+       // If only category is provided, filter products by category
+       query['category'] = req.query.category;
+
+       // Calculate total count for pagination
+       totalCount = await Product.countDocuments(query);
+      // product name, price, description, image, colours, rating
+      products = await Product.find({ category: req.query.category })
+        .select('-images -reviews -sizes')
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .populate('category', 'name')
+        .sort({ dateAdded: -1 });
+    } else {
+      totalCount = await Product.countDocuments(query);
+      products = await Product.find()
+        .select('-images -reviews -sizes')
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .populate('category', 'name')
+        .sort({ dateAdded: -1 });
+    }
+    if (!products) {
+      return res.status(404).json({ message: 'Products not found' });
+    }
+    const productsWithTotalCount = products.map(product => {
+      return {
+        ...product._doc,  // Spread the product object
+        totalCount       // Add totalCount to each product
+      };
+    });
+    return res.json(productsWithTotalCount);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

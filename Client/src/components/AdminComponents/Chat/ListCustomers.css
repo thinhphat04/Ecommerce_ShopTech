@@ -66,3 +66,15 @@
 .list-customers-support-btn:hover {
     background-color: #218838;
 }
+
+/* MÃ u ná»n khi user.isUserSender lÃ  true */
+.list-customers-item.sender-true {
+    background-color: red;
+    /* Vang*/
+}
+
+/* MÃ u ná»n khi user.isUserSender lÃ  false */
+.list-customers-item.sender-false {
+    background-color: greenyellow;
+    /* Äá» nháº¡t */
+}

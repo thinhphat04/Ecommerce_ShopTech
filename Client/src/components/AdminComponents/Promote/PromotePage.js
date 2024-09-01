@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../Common/AdminHeader';
-import AdminSidebar from '../Common/AdminSidebar';
+
+import AdminSidebar, { handleLoadOptionSelected } from '../Common/AdminSidebar';
 import { handleLoadingPage } from '../../Common';
 import EditButtonPromote from '../../EditButton/EditButtonPromote';
 import Papa from 'papaparse';
@@ -34,6 +35,7 @@ const PromotePage = () => {
         });
     };
     fetchAPI();
+    handleLoadOptionSelected(4);
   }, []);
 
   const handleSelectOrder = (orderId) => {

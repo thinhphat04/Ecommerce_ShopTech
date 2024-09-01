@@ -45,7 +45,7 @@ const CategoryPage = () => {
       };
       
       fetchAPI();
-      handleLoadOptionSelected(2);
+      handleLoadOptionSelected(3);
     }, []);
 
     console.log('categories:::', categories)

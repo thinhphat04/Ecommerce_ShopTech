@@ -30,7 +30,7 @@ const Dashboard = () => {
       //     processDataProduct(data);
       //   });
 
-        fetch(`http://localhost:3555/api/v1/products`, {
+        fetch(`http://localhost:3555/api/v1/products/khai/product?page=1`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${authAdmin.accessToken}` , 
@@ -40,7 +40,7 @@ const Dashboard = () => {
         .then((res) => res.json())
         .then((data) => {
           //console.log('data:::', data)
-          setCountProduct(data.length);
+          setCountProduct(data[0].totalCount);
           //processDataProduct(data);
            });
 
@@ -240,7 +240,11 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="admin__group">
+        <div className="admin__group"  style={{ 
+   
+    maxHeight: '110vh !important'
+  
+  }}>
           <label className="dash__group-title">ShopTech Statistics</label>
           <div className="dash__chart-list">
             <div className="dash__chart-item dash__chart-item--pie">

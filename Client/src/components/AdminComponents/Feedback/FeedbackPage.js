@@ -20,7 +20,7 @@ const FeedbackPage = () => {
     })
     .then((res) => res.json())
     .then((data) => {
-      //console.log('dataCateGORY:::', data)
+      console.log('dataCateGORY:::', data)
       //setCountProduct(data.length);
       setCategories(data);
        });  
@@ -42,7 +42,7 @@ const FeedbackPage = () => {
 
   useEffect(() => {
     fetchAPIs();
-    handleLoadOptionSelected(4);
+    handleLoadOptionSelected(5);
   }, []);
 
   const handleFillterByType = (type) => {

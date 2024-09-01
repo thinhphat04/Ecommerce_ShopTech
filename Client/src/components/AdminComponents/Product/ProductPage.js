@@ -11,11 +11,13 @@ const ProductPage = () => {
   const [countProduct, setCountProduct] = useState(0);
   const [loading, setLoading] = useState(true);
   const authAdmin = JSON.parse(localStorage.getItem('authAdmin'));
+  const [currentPage, setCurrentPage] = useState(1);
+const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     document.title = 'ShopTECH | Dữ liệu sản phẩm';
-    const fetchAPI = () => {
-      fetch('http://localhost:3555/api/v1/products', {
+    const fetchAPI = (page = 1) => {
+      fetch(`http://localhost:3555/api/v1/products/khai/product?page=${page}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authAdmin.accessToken}`,
@@ -29,8 +31,11 @@ const ProductPage = () => {
           return res.json();
         })
         .then((data) => {
+          // console.log('dataKHAIIII: ', data[0].totalCount);
+          // console.log('dataKHAIIII: ', data);
           setProducts(data);
           setCountProduct(data.length);
+          setTotalPages(Math.ceil(data[0].totalCount / 10));
           setLoading(false);
         })
         .catch((error) => {
@@ -38,9 +43,21 @@ const ProductPage = () => {
         });
     };
 
-    fetchAPI();
+    fetchAPI(currentPage);
     handleLoadOptionSelected(2);
-  }, []);
+  }, [currentPage]);
+
+const handleNextPage = () => {
+  if (currentPage < totalPages) {
+    setCurrentPage((prevPage) => prevPage + 1);
+  }
+};
+
+const handlePrevPage = () => {
+  if (currentPage > 1) {
+    setCurrentPage((prevPage) => prevPage - 1);
+  }
+};
 
   const navigate = useNavigate();
 
@@ -52,7 +69,7 @@ const ProductPage = () => {
   };
 
   const createProductLink = (productId) => {
-    return `http://localhost:3555/products/${productId}/?pricedeal=10`;
+    return `http://172.16.0.124:3555/products/${productId}/?price=`;
   };
 
   const handleCreateLink = (productId) => {
@@ -182,6 +199,18 @@ const ProductPage = () => {
             <button className="product__btn-add" onClick={handleClickBtnAdd}>
             Add new products
             </button>
+            <div className="product__pagination">
+              <button onClick={handlePrevPage} disabled={currentPage === 1}>
+                Previous
+              </button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                Next
+              </button>
+            </div>
+            <div>
+        
+      </div>
           </div>
         </div>
       </div>

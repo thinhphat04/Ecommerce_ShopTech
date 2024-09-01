@@ -8,7 +8,7 @@ const ListCustomers = () => {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
   const authAdmin = JSON.parse(window.localStorage.getItem('authAdmin'));
-  const adminId = authAdmin.userId; // Giả sử adminId có trong authAdmin
+  const adminId = authAdmin._id; // Assuming adminId exists in authAdmin
 
   const fetchChatHistory = async (userId) => {
     try {
@@ -20,6 +20,7 @@ const ListCustomers = () => {
       });
       
       if (response && response.data) {
+        console.log(`Chat history for user ${userId}:`, response.data); // Debugging line
         return response.data;
       } else {
         console.warn('No messages found');
@@ -33,12 +34,14 @@ const ListCustomers = () => {
 
   const checkLastMessageSender = async (userId) => {
     const chatHistory = await fetchChatHistory(userId);
-
+    console.log(`Checking last message sender for user ${userId}...`); // Debugging line
+  
     if (chatHistory.length > 0) {
       const lastMessage = chatHistory[chatHistory.length - 1];
+      console.log(`Last message sender for user ${userId}: ${lastMessage.senderId}`); // Debugging line
       return lastMessage.senderId === userId;
     }
-
+  
     return false;
   };
 
@@ -52,17 +55,18 @@ const ListCustomers = () => {
       });
       
       if (response && response.data) {
-        const filteredUsers = response.data.filter(user => !user.isAdmin);
-        setUsers(filteredUsers);
+        console.log('Users fetched:', response.data); // Debugging line
         const usersWithMessageCheck = await Promise.all(
           response.data
             .filter(user => !user.isAdmin)
             .map(async (user) => {
               const isUserSender = await checkLastMessageSender(user._id);
+              console.log(`User ${user._id} isUserSender: ${isUserSender}`); // Debugging line
               return { ...user, isUserSender };
             })
         );
 
+        console.log('Users with message check:', usersWithMessageCheck); // Debugging line
         setUsers(usersWithMessageCheck);
       } else {
         console.warn('No users found or no response data');
@@ -81,10 +85,6 @@ const ListCustomers = () => {
     fetchUsersData();
   }, []);
 
-  // const handleSupportClick = (userId) => {
-  //   navigate(`/admin/chat/${userId}`);
-  // };
-
   return (
     <>
       <AdminSidebar />
@@ -92,8 +92,14 @@ const ListCustomers = () => {
         <h2 className="list-customers-title">Customer List</h2>
         <ul className="list-customers-list">
           {users.map((user) => (
-            <li key={user._id} className="list-customers-item">
+            <li 
+              key={user._id} 
+              className={`list-customers-item ${user.isUserSender ? 'sender-true' : 'sender-false'}`}
+            >
               <span className="list-customers-name">{user.name}</span>
+              <span className="list-customers-last-message">
+                {user.isUserSender ? 'You Have a new Message' : ''}
+              </span>
               <button 
                 className="list-customers-support-btn"
                 onClick={() => handleSupportClick(user._id)}

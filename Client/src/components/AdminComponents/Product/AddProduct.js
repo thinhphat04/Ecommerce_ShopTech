@@ -23,7 +23,7 @@ const AddProduct = () => {
 
   useEffect(() => {
     document.title = 'ShopTECH | Add Product';
-    handleLoadOptionSelected(2);
+    // handleLoadOptionSelected(2);
 
     const fetchCategories = async () => {
       try {
@@ -158,16 +158,17 @@ const AddProduct = () => {
 
   return (
     <>
-      <AdminSidebar />
-      <div id="admin-box">
-        <AdminHeader />
-        <div className="admin__title">
-          <label className="admin__title-label">Have a nice day, admin!</label>
-          <label className="admin__title-describe">Add new product page</label>
-        </div>
-
+      <div id="admin-box" >
         <div className="add-product__container">
-          <div className="add__cover">
+          <div className="add__cover"   style={{ 
+    width: '50% !important', 
+    margin: '0 auto !important', 
+    maxHeight: '90vh !important', 
+    overflowY: 'auto !important', 
+    padding: '20px !important',
+    backgroundColor: 'white !important',
+    borderRadius: '10px !important',
+  }}>
             <div className="add">
               <div className="add__header">ADD NEW PRODUCT</div>
               <div className="add__body">
@@ -309,40 +310,40 @@ const AddProduct = () => {
                   />
                            {errors.imagePrimary && <p className="error">{errors.imagePrimary}</p>}
 
-<label className="add__label">Gallery Images</label>
-<input
-  type="file"
-  className="add__input"
-  onChange={handleImageGalleryChange}
-  accept="image/*"
-  multiple
-/>
-</div>
-</div>
+                    <label className="add__label">Gallery Images</label>
+                    <input
+                      type="file"
+                      className="add__input"
+                      onChange={handleImageGalleryChange}
+                      accept="image/*"
+                      multiple
+                    />
+                    </div>
+                    </div>
 
-<div className="button-container">
-<button className="add__btn-confirm" onClick={handleAddProduct}>
-Confirm
-<i className="add__btn-icon fa fa-check"></i>
-</button>
+                    <div className="button-container">
+                    <button className="add__btn-confirm" onClick={handleAddProduct}>
+                    Confirm
+                    <i className="add__btn-icon fa fa-check"></i>
+                    </button>
 
-<button
-onClick={(e) => {
-  e.preventDefault();
-  navigate('/admin/product');
-}}
-className="add__btn-close"
->
-Close
-<i className="add__btn-icon fa fa-sign-out"></i>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</>
-);
-};
+                    <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/admin/product');
+                    }}
+                    className="add__btn-close"
+                    >
+                    Close
+                    <i className="add__btn-icon fa fa-sign-out"></i>
+                    </button>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </>
+                    );
+                    };
 
 export default AddProduct;
