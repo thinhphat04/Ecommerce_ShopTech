@@ -1,16 +1,16 @@
 
 ### TechShop (Ecommerce Store)
 
-**Ứng dụng này sử dụng công nghệ API Node.js để xây dựng phía server và sử dụng Flutter để xây dựng phía client.**
+**Ứng dụng này sử dụng công nghệ API Spring boot để xây dựng phía server và sử dụng Flutter để xây dựng phía client.**
 
 - Clean architecture với Riverpod 2.0.
 - Backend MVC.
 - Restful API
-- Backend được xây dựng với framework Express và MongoDB.
+- Backend Spring Boot và database MongoDB.
 - Cron job hệ thống ứng dụng kiểm tra các đơn hàng chưa thanh toán và xóa đơn mỗi 24 giờ
 
 <div align="center">
-<img src="https://skillicons.dev/icons?i=nodejs,mongodb,flutter,postman,dart,express" align="middle" /><br>
+<img src="https://skillicons.dev/icons?i=java,spring,mongodb,flutter,postman,dart,express" align="middle" /><br>
 </div>
 
 - Giao diện thân thiện với người dùng để trải nghiệm mua sắm mượt mà
